@@ -77,10 +77,10 @@ jobs:
                     sudo systemctl restart fastapi
                   EOF
 
-            - name: Configure Nginx
-              run: |
-                  ssh -o StrictHostKeyChecking=no -i private_key.pem $AWS_USER@$AWS_HOST << 'EOF'
-                    sudo cp /home/$AWS_USER/fastapi-book-project/nginx.conf /etc/nginx/sites-available/fastapi
-                    sudo ln -sf /etc/nginx/sites-available/fastapi /etc/nginx/sites-enabled
-                    sudo systemctl restart nginx
-                  EOF
+            # - name: Configure Nginx
+            #   run: |
+            #       ssh -o StrictHostKeyChecking=no -i private_key.pem $AWS_USER@$AWS_HOST << 'EOF'
+            #         sudo cp /home/$AWS_USER/fastapi-book-project/nginx.conf /etc/nginx/sites-available/fastapi
+            #         sudo ln -sf /etc/nginx/sites-available/fastapi /etc/nginx/sites-enabled
+            #         sudo systemctl restart nginx
+            #       EOF
