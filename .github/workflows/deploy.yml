@@ -1,4 +1,43 @@
-name: CD - Deploy to Railway
+# name: Deploy to AWS EC2
+
+# on:
+#     push:
+#         branches:
+#             - main # Runs when code is merged into main
+
+# jobs:
+#     deploy:
+#         runs-on: ubuntu-latest
+
+#         steps:
+#         - name: Checkout code
+#         uses: actions/checkout@v3
+
+#         - name: Deploy to EC2
+#         env:
+#           AWS_HOST: ${{ secrets.AWS_HOST }}
+#           AWS_USER: ${{ secrets.AWS_USER }}
+#           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+#         run: |
+#           echo "$SSH_PRIVATE_KEY" > private_key.pem
+#           chmod 600 private_key.pem
+#           ssh -o StrictHostKeyChecking=no -i private_key.pem $AWS_USER@$AWS_HOST << 'EOF'
+#             cd /home/$AWS_USER/fastapi-book-project
+#             git pull origin main
+#             source venv/bin/activate
+#             pip install -r requirements.txt
+#             sudo systemctl restart fastapi
+#           EOF
+
+#         - name: Configure Nginx
+#         run: |
+#           ssh -o StrictHostKeyChecking=no -i private_key.pem $AWS_USER@$AWS_HOST << 'EOF'
+#             sudo cp /home/$AWS_USER/fastapi-book-project/nginx.conf /etc/nginx/sites-available/fastapi
+#             sudo ln -sf /etc/nginx/sites-available/fastapi /etc/nginx/sites-enabled
+#             sudo systemctl restart nginx
+#           EOF
+
+name: Deploy to AWS EC2
 
 on:
     push:
@@ -7,13 +46,32 @@ on:
 
 jobs:
     deploy:
-        name: Deploy to Railway
+        name: Deploy to AWS EC2
         runs-on: ubuntu-latest
-
         steps:
-            - name: Deploy to Railway
-              uses: railwayapp/railway-github-action@main
-              with:
-                  service: 'fastapi-service'
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Deploy to EC2
               env:
-                  RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+                  AWS_HOST: ${{ secrets.AWS_HOST }}
+                  AWS_USER: ${{ secrets.AWS_USER }}
+                  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+              run: |
+                  echo "$SSH_PRIVATE_KEY" > private_key.pem
+                  chmod 600 private_key.pem
+                  ssh -o StrictHostKeyChecking=no -i private_key.pem $AWS_USER@$AWS_HOST << 'EOF'
+                    cd /home/$AWS_USER/fastapi-book-project
+                    git pull origin main
+                    source venv/bin/activate
+                    pip install -r requirements.txt
+                    sudo systemctl restart fastapi
+                  EOF
+
+            - name: Configure Nginx
+              run: |
+                  ssh -o StrictHostKeyChecking=no -i private_key.pem $AWS_USER@$AWS_HOST << 'EOF'
+                    sudo cp /home/$AWS_USER/fastapi-book-project/nginx.conf /etc/nginx/sites-available/fastapi
+                    sudo ln -sf /etc/nginx/sites-available/fastapi /etc/nginx/sites-enabled
+                    sudo systemctl restart nginx
+                  EOF
