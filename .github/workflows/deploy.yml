@@ -61,8 +61,17 @@ jobs:
                   echo "$SSH_PRIVATE_KEY" > private_key.pem
                   chmod 600 private_key.pem
                   ssh -o StrictHostKeyChecking=no -i private_key.pem $AWS_USER@$AWS_HOST << 'EOF'
+                      if [ ! -d "/home/$AWS_USER/fastapi-book-project" ]; then
+                    git clone https://github.com/cyberraff/fastapi-book-project.git /home/$AWS_USER/fastapi-book-project
+                    fi
+
                     cd /home/$AWS_USER/fastapi-book-project
                     git pull origin main
+
+                    if [ ! -d "venv" ]; then
+                    python3 -m venv venv
+                    fi
+                    
                     source venv/bin/activate
                     pip install -r requirements.txt
                     sudo systemctl restart fastapi
