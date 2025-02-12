@@ -1,4 +1,4 @@
-name: Deploy to AWS EC2
+name: deploy
 
 on:
     push:
@@ -9,6 +9,7 @@ jobs:
     deploy:
         name: Deploy to AWS EC2
         runs-on: ubuntu-latest
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         steps:
             - name: Checkout code
               uses: actions/checkout@v3
